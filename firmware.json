@@ -1,8 +1,8 @@
 {
     "pgm_version": "1.1.5",
     "pgm_url": "https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/N_Valve.controller.Update.bin",
-    "pgm_sha256": "dc00e6db0540d2e1e30eb448ebc1fc75380db4866c2deb317540dfccfdeeafef",
-    "pgm_zip_sha256": "11de68e55c78b4cd4fb5c694e18c390e0c4961c0fcf15b9ef18e6fe0990d5e7a",
+    "pgm_sha256": "59c80335f1ddcac554104ba10daeec0112e3ca91d64b558046368ea9455ded26",
+    "pgm_zip_sha256": "a244cf941d2116e7a9567547d5dc6a2934ca98e86b511892db213d5d52765515",
     "version": "2.3.0",
     "hex_url": "https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/exhaust.hex",
     "sha256": "f8f586bb592b9164ca4acd3aa9ad2fb308b456c976acad1b7047bfebafc224c3",
@@ -20,6 +20,6 @@
         "version_code": 3,
         "version_name": "1.0.3",
         "apk_url": "https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/NControllerMobile.apk",
-        "sha256": "4a81c03fdcb091c7add8ec4964f01e53daf7a4dd512385be10f142340d3b9f11"
+        "sha256": "f120d742cb1c476ebb97da84481406bfc86dc823f2122cb75223f5bca8edca5c"
     }
 }
