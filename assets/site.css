@@ -86,6 +86,7 @@ a.card:hover { text-decoration: none; border-color: var(--line2); background: va
 .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .02em; }
 .tag.sale { color: var(--green); background: var(--green-bg); }
 .tag.soon { color: var(--amber); background: var(--amber-bg); }
+.tag.end { color: var(--dim); background: rgba(133, 142, 153, .14); }
 .tag.info { color: var(--blue2); background: var(--blue-bg); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .kicker { color: var(--dim); font-size: 13px; }
