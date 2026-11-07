@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07090b">
-<meta name="nc-site" content="2026-11-08 01:59">
+<meta name="nc-site" content="2026-11-08 02:06">
 <title>N Controller</title>
 <meta name="description" content="아반떼 N · 벨로스터 N · 코나 N 배기밸브 · 안개등 컨트롤러와 N HORIZON 디스플레이. 설명서 · 설치 방법 · 다운로드 · 업데이트 내역.">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
@@ -92,16 +92,16 @@
   <div class="dl">
     <div class="dl-group" id="dl-v1">배기밸브 · 안개등 컨트롤러 (v1)</div>
     <div class="dl-row" data-dl="v1_apk">
-      <div><h3>N Controller Mobile</h3><div class="d">안드로이드 앱 · APK <span class="v" data-ver></span></div></div>
+      <div><h3>N Controller Mobile</h3><div class="d">안드로이드 앱 · APK</div></div>
       <a class="btn primary" data-href>APK 받기</a>
     </div>
     <div class="dl-row" data-dl="v1_pc">
-      <div><h3>N 밸브 컨트롤러 (PC)</h3><div class="d">Windows 프로그램 · ZIP <span class="v" data-ver></span></div></div>
+      <div><h3>N 밸브 컨트롤러 (PC)</h3><div class="d">Windows 프로그램 · ZIP</div></div>
       <a class="btn" data-href>ZIP 받기</a>
     </div>
     <div class="dl-group" id="dl-v2">V2 · V2X · V2E</div>
     <div class="dl-row" data-dl="v2_apk">
-      <div><h3>N Controller v2</h3><div class="d">안드로이드 앱 · APK <span class="v" data-ver></span></div></div>
+      <div><h3>N Controller v2</h3><div class="d">안드로이드 앱 · APK</div></div>
       <a class="btn primary" data-href>APK 받기</a>
     </div>
     <div class="dl-row" data-dl="web">
@@ -195,7 +195,7 @@
   <p id="stamp"></p>
 </div></footer>
 
-<script id="site-data" type="application/json">{"stamp":"2026-11-08 01:59","products":{"v1x":"sale","v1f":"end","v2":"end","v2x":"soon","v2e":"soon","nh":"soon"},"downloads":{"v1_apk":{"url":"https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/NControllerMobile.apk","ver":"2.3.4"},"v1_pc":{"url":"https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/N_Valve.controller.Update.zip","ver":"1.3.1"}},"versions":[{"name":"N Controller Mobile 앱 (v1)","ver":"2.3.4"},{"name":"N 밸브 컨트롤러 PC 프로그램 (v1)","ver":"1.3.1"}],"server":"https://script.google.com/macros/s/AKfycbwcvu1k3HLs8aGLRlp2007acu-CQCtjm4TMZFfDdHQf2p-n0ZCEO9hynKv1byQIhye7/exec","notes_v1":[],"notes_v2":[{"id":"rRvqUHjXLtjwsmtU","date":"2026-09-01","kind":"앱","title":"V2 베타 테스트","body":"V2 테스트 중입니다. 상시로 업데이트 합니다."}]}</script>
+<script id="site-data" type="application/json">{"stamp":"2026-11-08 02:06","products":{"v1x":"sale","v1f":"end","v2":"end","v2x":"soon","v2e":"soon","nh":"soon"},"downloads":{"v1_apk":{"url":"https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/NControllerMobile.apk"},"v1_pc":{"url":"https://github.com/kdh90221-dev/ncontroller-update/releases/latest/download/N_Valve.controller.Update.zip"}},"server":"https://script.google.com/macros/s/AKfycbwcvu1k3HLs8aGLRlp2007acu-CQCtjm4TMZFfDdHQf2p-n0ZCEO9hynKv1byQIhye7/exec","notes_v1":[],"notes_v2":[{"id":"rRvqUHjXLtjwsmtU","date":"2026-09-01","kind":"앱","title":"V2 베타 테스트","body":"V2 테스트 중입니다. 상시로 업데이트 합니다."}]}</script>
 <script>
 (function () {
   'use strict';
@@ -223,8 +223,6 @@
     if (!d || !d.url) { row.hidden = true; return; }
     var a = row.querySelector('[data-href]');
     a.href = d.url;
-    var v = row.querySelector('[data-ver]');
-    if (v && d.ver) v.textContent = 'v' + d.ver;
   });
 
   // ── 업데이트 내역 — v1 은 사이트에 적은 것, v2 는 앱과 같은 서버 내역(없으면 올릴 때 받아 둔 것) ──
