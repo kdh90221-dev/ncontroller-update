@@ -181,3 +181,53 @@ footer p { margin: 4px 0; }
 .doc code { font-family: var(--mono); font-size: .92em; background: var(--card2); padding: 1px 6px; border-radius: 5px; color: var(--blue2); }
 .doc .applies { display: flex; flex-wrap: wrap; gap: 6px; margin: -2px 0 10px; }
 .doc .src { color: var(--dim); font-size: 13px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+/* ── 제품 소개 쪽 (v2x · v2e) ── */
+.p-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line);
+  background: radial-gradient(1000px 500px at 80% 0%, rgba(77, 163, 255, .12), transparent 70%); }
+.p-hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; padding-top: 56px; padding-bottom: 44px; }
+.p-hero h1 { font-size: clamp(28px, 4.2vw, 46px); line-height: 1.2; margin: 12px 0 14px; letter-spacing: -.02em; }
+.p-hero p { color: var(--sub); font-size: 17px; margin: 0 0 18px; }
+.p-chips { gap: 6px; }
+.p-chips .tag { font-size: 12.5px; padding: 5px 10px; }
+.p-hero-img img { width: 100%; height: auto; border-radius: 18px; border: 1px solid var(--line); display: block; }
+.p-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.p-stats > div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.p-stats b { display: block; font-size: 26px; color: var(--blue2); letter-spacing: -.01em; }
+.p-stats span { color: var(--dim); font-size: 13px; }
+@media (max-width: 860px) {
+  .p-hero .wrap { grid-template-columns: 1fr; padding-top: 36px; }
+  .p-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.p-toc { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-top: 14px; padding-bottom: 14px; position: sticky; top: 60px; z-index: 10;
+  background: rgba(7, 9, 11, .92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); max-width: none; }
+.p-toc::-webkit-scrollbar { display: none; }
+.p-toc a { flex: none; font-size: 13px; color: var(--sub); padding: 6px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--card); white-space: nowrap; }
+.p-toc a:hover { text-decoration: none; color: var(--text); border-color: var(--line2); }
+@media (max-width: 720px) { .p-toc { top: 92px; } }
+.p-sec { padding: 52px 0; }
+.p-sec .head { max-width: 760px; }
+.p-sec .head p { color: var(--sub); margin-top: 8px; }
+.p-wides { display: grid; gap: 14px; margin-bottom: 18px; }
+.p-wides.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.p-wides.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .p-wides.n2, .p-wides.n3 { grid-template-columns: 1fr; } }
+.p-wide { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.p-wide img { width: 100%; height: auto; display: block; cursor: zoom-in; }
+.p-wide figcaption, .p-shot figcaption { padding: 12px 14px 14px; color: var(--sub); font-size: 14px; }
+.p-wide figcaption b, .p-shot figcaption b { display: block; color: var(--text); font-size: 15px; margin-bottom: 3px; }
+.p-shots { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); margin-bottom: 18px; }
+.p-shot { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+.p-shot img { width: 100%; height: auto; display: block; cursor: zoom-in; background: #000; border-bottom: 1px solid var(--line); }
+@media (max-width: 560px) { .p-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .p-shot figcaption { font-size: 13px; padding: 10px 11px 12px; } }
+.p-notes .card { padding: 18px 20px; }
+.p-notes .card h3 { margin-top: 0; font-size: 16px; }
+.p-notes .card p { margin: 0; font-size: 14.5px; }
+.p-end { text-align: center; padding: 56px 0 64px; border-top: 1px solid var(--line); }
+.p-end img { width: min(720px, 100%); height: auto; border-radius: 16px; border: 1px solid var(--line); }
+.p-end h2 { font-size: clamp(22px, 3vw, 28px); margin: 22px 0 8px; }
+.p-end p { color: var(--sub); margin: 0 auto 22px; max-width: 620px; }
+.p-zoom { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .92); display: flex; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; }
+.p-zoom[hidden] { display: none; }
+.p-zoom img { max-width: 100%; max-height: 100%; border-radius: 10px; }
+.card .more-link { margin-top: auto; font-weight: 700; font-size: 14px; }
