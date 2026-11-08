@@ -100,7 +100,10 @@ a.card:hover { text-decoration: none; border-color: var(--line2); background: va
 .dl-row .v { font-family: var(--mono); color: var(--blue2); font-size: 13px; }
 .dl-group { color: var(--dim); font-size: 13px; font-weight: 700; letter-spacing: .08em; margin: 18px 0 2px; }
 .dl-group:first-child { margin-top: 0; }
+.dl-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.open-btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
 @media (max-width: 560px) { .dl-row { grid-template-columns: 1fr; } .dl-row .btn { width: 100%; } }
+@media (max-width: 560px) { .dl-btns, .open-btns { flex-direction: column; } .open-btns .btn { width: 100%; } }
 
 /* 설치 — 탭 */
 .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px; }
