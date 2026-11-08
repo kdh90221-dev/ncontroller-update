@@ -39,7 +39,7 @@ img { max-width: 100%; }
 .logo { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 800; letter-spacing: .14em; font-size: 15px; white-space: nowrap; }
 .logo:hover { text-decoration: none; }
 .logo .mark { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--line2); flex: none;
-  background: var(--card2) url(mark.svg) center / 21px auto no-repeat; }
+  background: #0a0c0e url(mark.svg) center / 24px auto no-repeat; }
 .nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
 .nav::-webkit-scrollbar { display: none; }
 .nav a { color: var(--sub); font-size: 14px; padding: 7px 11px; border-radius: 8px; white-space: nowrap; }
