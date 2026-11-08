@@ -110,6 +110,38 @@
       .then(function () { a.textContent = label; a.style.pointerEvents = ''; });
   }, true);
 
+  /*
+   * ── 쪽 안에 든 파일(data: 주소 + download) — 아이폰 (2026-11-09) ──
+   *   아이폰 사파리 · Bluefy 는 data: 주소 다운로드를 눌러도 아무 반응이 없다.
+   *   눌렀을 때 파일로 바꿔 공유 창(「파일에 저장」)을 띄우고, 공유 창이 없으면 blob 주소로 받기.
+   */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[download][href^="data:"]') : null;
+    if (!a) return;
+    var name = a.getAttribute('download') || 'file', href = a.getAttribute('href');
+    var m = /^data:([^,]*?)(;base64)?,(.*)$/.exec(href);
+    if (!m) return;
+    e.preventDefault();
+    var bin;
+    try {
+      if (m[2]) { var s = atob(m[3]); bin = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) bin[i] = s.charCodeAt(i); }
+      else bin = new TextEncoder().encode(decodeURIComponent(m[3]));
+    } catch (er) { return; }
+    var type = /\.md$/.test(name) ? 'text/markdown' : (m[1].split(';')[0] || 'application/octet-stream');
+    var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var file = null;
+    try { file = new File([bin], name, { type: type }); } catch (er) {}
+    if (ios && file && navigator.canShare && navigator.share) {
+      var ok = false; try { ok = navigator.canShare({ files: [file] }); } catch (er) {}
+      if (ok) { navigator.share({ files: [file] }).catch(function () {}); return; }
+    }
+    /* 아이폰인데 공유 창이 없는 브라우저 — 받기가 안 될 수 있어 사파리 안내도 같이 */
+    if (ios && !navigator.share) setTimeout(function () { alertBox('파일이 받아지지 않으면 사파리에서 ncontroller.kr 을 열어 다운로드해 주세요.'); }, 600);
+    var u = URL.createObjectURL(file || new Blob([bin], { type: type }));
+    var t = document.createElement('a'); t.href = u; t.download = name; document.body.appendChild(t); t.click(); t.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+  }, true);
+
   /* ── 잠긴 동안 — 아직 없는 자리(#dl-v1 · #dl-v2 · #install-v1 …)로 가는 링크는 코드 칸으로 ── */
   document.addEventListener('click', function (e) {
     if (KEY) return;
