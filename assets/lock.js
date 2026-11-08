@@ -9,7 +9,7 @@
  *     <div class="nc-locked" data-lock="id">     + <script type="application/octet-stream" id="nc-lock-id">  (첫 화면 칸)
  *     <script type="application/octet-stream" id="nc-page">                                      (설명서 쪽 통째)
  *     <img data-enc-src="…jpg.enc">                                                              (설치 사진)
- *     <a href="dl/….apk.enc">                                                                    (받기 — 풀어서 저장)
+ *     <a href="dl/….apk.enc">                                                                    (다운로드 — 풀어서 저장)
  */
 (function () {
   'use strict';
@@ -91,14 +91,14 @@
     });
   }
 
-  /* ── 받기 — 내려받아 풀고 저장 ── */
+  /* ── 다운로드 — 내려받아 풀고 저장 ── */
   document.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href$=".enc"]') : null;
     if (!a) return;
     e.preventDefault();
     if (!KEY) { ask(); return; }
     var url = a.getAttribute('href'), name = url.split('/').pop().replace(/\.enc$/, '');
-    var label = a.textContent; a.textContent = '받는 중…'; a.style.pointerEvents = 'none';
+    var label = a.textContent; a.textContent = '다운로드 중…'; a.style.pointerEvents = 'none';
     fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
       .then(function (b) { return dec(KEY, new Uint8Array(b)); })
       .then(function (d) {
@@ -106,16 +106,30 @@
         var t = document.createElement('a'); t.href = u; t.download = name; document.body.appendChild(t); t.click(); t.remove();
         setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
       })
-      .catch(function () { alertBox('받지 못했습니다. 잠시 뒤 다시 눌러 주세요.'); })
+      .catch(function () { alertBox('다운로드하지 못했습니다. 잠시 뒤 다시 눌러 주세요.'); })
       .then(function () { a.textContent = label; a.style.pointerEvents = ''; });
   }, true);
 
-  /* ── 코드 넣는 칸 ── */
+  /* ── 잠긴 동안 — 아직 없는 자리(#dl-v1 · #dl-v2 · #install-v1 …)로 가는 링크는 코드 칸으로 ── */
+  document.addEventListener('click', function (e) {
+    if (KEY) return;
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    if (!id || document.getElementById(id)) return;
+    e.preventDefault();
+    ask();
+  }, true);
+
+  /* ── 코드 넣는 칸 (2026-11-09 — 한 쪽에 한 곳만. 나머지 잠긴 칸은 안내 + 「코드 넣기」) ── */
   var css = '.nc-lockcard{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px;background:rgba(255,255,255,.03);max-width:520px}' +
     '.nc-lockcard h3{margin:0 0 6px;font-size:17px}.nc-lockcard p{margin:0 0 14px;color:#9aa2aa;font-size:14px;line-height:1.6}' +
     '.nc-lockcard form{display:flex;gap:8px;flex-wrap:wrap}.nc-lockcard input{flex:1;min-width:160px;padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);' +
     'background:#0d1116;color:#fff;font-size:16px;letter-spacing:.12em;text-transform:uppercase}.nc-lockcard .err{color:#ff6b6b;margin:10px 0 0;font-size:13px;min-height:1em}' +
-    '.nc-gate{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:24px}';
+    '.nc-gate{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:24px}' +
+    '.nc-lockhint{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px dashed rgba(255,255,255,.16);border-radius:14px;padding:14px 16px;color:#9aa2aa;font-size:14px;line-height:1.6;max-width:520px}' +
+    '.nc-lockhint span{flex:1;min-width:200px}' +
+    '@keyframes ncflash{0%{box-shadow:0 0 0 0 rgba(161,196,235,.7)}100%{box-shadow:0 0 0 14px rgba(161,196,235,0)}}.nc-flash{animation:ncflash .9s ease-out 2}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   function card() {
@@ -133,12 +147,30 @@
     });
     return d;
   }
-  function ask() { var i = document.querySelector('.nc-lockcard input'); if (i) { i.scrollIntoView({ block: 'center' }); i.focus(); } }
+  function ask() {
+    var i = document.querySelector('.nc-lockcard input');
+    if (!i) return;
+    i.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setTimeout(function () { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } }, 350);
+    var c = i.closest('.nc-lockcard');
+    if (c) { c.classList.remove('nc-flash'); void c.offsetWidth; c.classList.add('nc-flash'); }
+  }
+  function hint() {
+    var d = document.createElement('div'); d.className = 'nc-lockhint';
+    d.innerHTML = '<span>구매자 전용입니다. 구매자 코드를 한 번 넣으면 다운로드 · 설치 방법 · 설명서가 함께 열립니다.</span>' +
+      '<button class="btn" type="button">코드 넣기</button>';
+    d.querySelector('button').addEventListener('click', ask);
+    return d;
+  }
   function alertBox(m) { try { window.alert(m); } catch (e) {} }
 
   function showLocks() {
-    [].slice.call(document.querySelectorAll('.nc-locked[data-lock]')).forEach(function (box) { box.appendChild(card()); });
     var gate = document.getElementById('nc-gate');
+    var first = !gate;
+    [].slice.call(document.querySelectorAll('.nc-locked[data-lock]')).forEach(function (box) {
+      box.appendChild(first ? card() : hint());
+      first = false;
+    });
     if (gate) gate.appendChild(card());
   }
 
