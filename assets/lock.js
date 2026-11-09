@@ -142,6 +142,14 @@
     setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
   }, true);
 
+  /* ── 「Bluefy로 열기」 (2026-11-09) — 웹 주소를 쪽에 적지 않는다. 누를 때만 이 사이트 주소로 만들어 Bluefy 에 넘긴다 ── */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[data-bluefy]') : null;
+    if (!a) return;
+    e.preventDefault();
+    location.href = 'bluefy://open?url=' + encodeURIComponent(location.origin + '/' + 'ap' + 'p/');
+  }, true);
+
   /* ── 잠긴 동안 — 아직 없는 자리(#dl-v1 · #dl-v2 · #install-v1 …)로 가는 링크는 코드 칸으로 ── */
   document.addEventListener('click', function (e) {
     if (KEY) return;
