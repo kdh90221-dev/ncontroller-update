@@ -1,0 +1,54 @@
+/* 주문서 · 주문 조회 (2026-11-22) — 링크로만 들어오는 화면 · site.css 위에 */
+.shop { max-width: 560px; margin: 0 auto; padding: 28px 20px 60px; }
+.shop h1 { font-size: 24px; margin: 0 0 6px; }
+.shop .lead { color: var(--sub); margin: 0 0 20px; font-size: 15px; }
+.shop .box { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; margin-bottom: 18px; }
+.shop .box h2 { font-size: 17px; margin: 0 0 12px; }
+.shop .sum .k { font-size: 13px; color: var(--sub); }
+.shop .sum .p { font-size: 20px; font-weight: 700; margin: 2px 0 10px; }
+.shop .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.shop .row:first-of-type { border-top: 0; }
+.shop .row > span:first-child { color: var(--sub); flex: none; }
+.shop .row > span:last-child { text-align: right; }
+.shop .row .amt { font-size: 19px; font-weight: 700; color: var(--blue); }
+.shop .hint { font-size: 13px; color: var(--dim); margin: 8px 0 0; line-height: 1.6; }
+.shop label { display: block; font-size: 13px; color: var(--sub); margin: 12px 0 0; }
+.shop label:first-of-type { margin-top: 0; }
+.shop input[type=text], .shop input[type=tel], .shop select {
+  display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 16px; color: var(--text); background: var(--bg2);
+  border: 1px solid var(--line2); border-radius: 10px; padding: 12px; min-height: 46px; }
+.shop input:focus, .shop select:focus { outline: 2px solid var(--blue); outline-offset: 0; }
+.shop .bad { border-color: var(--red) !important; }
+.shop .line { display: flex; gap: 8px; }
+.shop .line input { flex: 1 1 auto; min-width: 0; }
+.shop .line .btn { flex: none; margin-top: 6px; }
+.shop .check { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; color: var(--text); margin-top: 4px; cursor: pointer; }
+.shop .check input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; }
+.shop details { font-size: 13px; color: var(--sub); margin: 8px 0 0 30px; }
+.shop details summary { cursor: pointer; color: var(--blue); }
+.shop .go { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 54px; border: 0; border-radius: 12px;
+  background: var(--blue); color: #04121f; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; text-decoration: none; }
+.shop .go:hover { text-decoration: none; filter: brightness(1.06); }
+.shop .go[disabled] { opacity: .55; cursor: default; }
+.shop .sub-go { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 10px; border-radius: 12px;
+  border: 1px solid var(--line2); color: var(--text); text-decoration: none; font-size: 15px; }
+.shop .sub-go:hover { text-decoration: none; background: var(--card2); }
+.shop .msg { color: var(--red); font-size: 14px; margin: 10px 0 0; min-height: 1em; }
+.shop .copy { font: inherit; font-size: 13px; color: var(--text); background: var(--card2); border: 1px solid var(--line2); border-radius: 8px;
+  padding: 0 10px; min-height: 32px; margin-left: 8px; cursor: pointer; }
+.shop .center { text-align: center; }
+.shop .ok-mark { width: 56px; height: 56px; margin: 4px auto 10px; display: block; }
+.shop .test { display: inline-block; font-size: 12px; color: var(--amber); background: var(--amber-bg); border-radius: 6px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
+.shop .steps2 { list-style: none; margin: 0; padding: 0; }
+.shop .steps2 li { position: relative; padding: 0 0 18px 30px; }
+.shop .steps2 li::before { content: ""; position: absolute; left: 4px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line2); background: var(--bg); }
+.shop .steps2 li::after { content: ""; position: absolute; left: 10px; top: 22px; bottom: 2px; width: 2px; background: var(--line2); }
+.shop .steps2 li:last-child::after { display: none; }
+.shop .steps2 li.done::before { background: var(--blue); border-color: var(--blue); }
+.shop .steps2 li.done::after { background: var(--blue); }
+.shop .steps2 li.now::before { border-color: var(--blue); border-width: 3px; }
+.shop .steps2 li b { display: block; font-weight: 600; }
+.shop .steps2 li.now b { color: var(--blue); }
+.shop .steps2 li .d { font-size: 13px; color: var(--sub); }
+.shop .steps2 li.todo b { color: var(--dim); font-weight: 400; }
+.shop .cancel { color: var(--red); font-weight: 600; }
