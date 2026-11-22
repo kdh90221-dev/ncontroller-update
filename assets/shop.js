@@ -17,6 +17,13 @@
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
   function product(o) { return esc(o.product) + (o.with_switch ? ' + 순정형 배기 스위치' : ''); }
+  /** ★11-22 가격 종류 표시 — v1 이벤트 · v1 할인일 때만 */
+  function kindTag(o) {
+    var k = String(o.price_kind || '');
+    if (k === 'v1 이벤트') return '<span class="kind">v1 고객 감사 이벤트</span>';
+    if (k === 'v1 할인') return '<span class="kind">v1 고객 할인</span>';
+    return '';
+  }
   function copyBtn(text) { return '<button type="button" class="copy" data-copy="' + esc(text) + '">복사</button>'; }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-copy]');
@@ -33,12 +40,12 @@
       ? '<div class="row"><span>은행</span><span>' + esc(o.bank) + '</span></div>' +
         '<div class="row"><span>계좌</span><span>' + esc(o.account) + copyBtn(String(o.account).replace(/[^0-9]/g, '')) + '</span></div>' +
         '<div class="row"><span>예금주</span><span>' + esc(o.holder) + '</span></div>'
-      : '<div class="row"><span>입금 계좌</span><span>카카오톡으로 안내드립니다</span></div>';
+      : '<div class="row"><span>입금 계좌</span><span>카카오톡으로 안내합니다</span></div>';
     return '<div class="box"><h2>입금 안내</h2>' + acc +
       '<div class="row"><span>입금할 금액</span><span class="amt">' + won(o.amount) + copyBtn(String(o.amount)) + '</span></div>' +
       (o.payer ? '<div class="row"><span>입금자명</span><span>' + esc(o.payer) + '</span></div>' : '') +
       (o.due ? '<div class="row"><span>입금 기한</span><span>' + day(o.due) + '까지</span></div>' : '') +
-      '<p class="hint">입금이 확인되면 제작을 시작합니다. 기한 안에 입금이 없으면 주문이 취소됩니다.</p></div>';
+      '<p class="hint">입금자명이 주문자 이름과 다르면 카카오톡으로 알려 주세요.<br>기한이 지나면 주문이 취소될 수 있습니다.</p></div>';
   }
 
   /** 진행 상황 */
@@ -71,15 +78,16 @@
 
   function orderHead(o) {
     return '<div class="box sum"><div class="k">주문번호 ' + esc(o.order_no) + (o.test ? '<span class="test">시험</span>' : '') + '</div>' +
-      '<div class="p">' + product(o) + '</div>' +
+      kindTag(o) + '<div class="p">' + product(o) + '</div>' +
       '<div class="row"><span>차종</span><span>' + esc(o.vehicle || '-') + '</span></div>' +
-      '<div class="row"><span>금액</span><span>' + won(o.amount) + '</span></div></div>';
+      '<div class="row"><span>금액</span><span>' + won(o.amount) + '</span></div>' +
+      (o.ship_note && (o.state === '접수' || o.state === '입금') ? '<div class="row"><span>발송</span><span>' + esc(o.ship_note) + '</span></div>' : '') + '</div>';
   }
 
   function afterBox() {
     return '<a class="sub-go" href="' + KAKAO + '" target="_blank" rel="noopener">카카오톡 문의</a>';
   }
 
-  window.NCShop = { call: call, won: won, day: day, esc: esc, product: product, payBox: payBox, trackBox: trackBox,
+  window.NCShop = { call: call, won: won, day: day, esc: esc, product: product, kindTag: kindTag, payBox: payBox, trackBox: trackBox,
                     orderHead: orderHead, afterBox: afterBox, copyBtn: copyBtn, KAKAO: KAKAO };
 })();
