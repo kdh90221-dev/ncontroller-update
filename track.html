@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07090b">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>주문 조회 · N Controller</title>
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css?v=99b293b2">
+<link rel="stylesheet" href="assets/shop.css?v=8972371b">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>N CONTROLLER</a>
+</div></header>
+<main class="shop">
+  <h1>주문 조회</h1>
+  <div id="ask" class="box" hidden>
+    <label>주문번호<input type="text" id="no" placeholder="N-1122-01" autocapitalize="characters"></label>
+    <label>연락처 뒤 4자리<input type="tel" id="p4" inputmode="numeric" maxlength="4" placeholder="5678"></label>
+    <p class="msg" id="msg"></p>
+    <button type="button" class="go" id="go">조회</button>
+  </div>
+  <div id="out"><p class="lead">불러오는 중입니다…</p></div>
+</main>
+<script src="assets/shop.js?v=96fa040c"></script>
+<script>
+(function () {
+  var S = window.NCShop, out = document.getElementById('out'), ask = document.getElementById('ask');
+  var k = new URLSearchParams(location.search).get('k') || '';
+
+  function show(o) {
+    ask.hidden = true;
+    out.innerHTML = S.orderHead(o) + S.trackBox(o) + (o.state === '접수' ? S.payBox(o) : '') +
+      ((o.state === '출고' || o.state === '배송' || o.state === '완료')
+        ? '<div class="box"><h2>받은 뒤</h2><p class="hint" style="margin:0">설치 설명서를 보고 장착해 주세요.<br>' +
+          '<a href="index.html#manual">설치 설명서</a> · <a href="index.html#download">앱 · 프로그램 다운로드</a></p></div>' : '') +
+      S.afterBox();
+  }
+
+  function form(text) {
+    ask.hidden = false;
+    out.innerHTML = '';
+    document.getElementById('msg').textContent = text || '';
+  }
+
+  document.getElementById('go').onclick = function () {
+    var no = document.getElementById('no').value.trim().toUpperCase(), p4 = document.getElementById('p4').value.trim();
+    var msg = document.getElementById('msg'), btn = this;
+    if (!/^N-\d{4}-\d{2,3}$/.test(no) || !/^\d{4}$/.test(p4)) { msg.textContent = '주문번호와 연락처 뒤 4자리를 확인해 주세요.'; return; }
+    btn.disabled = true; msg.textContent = '';
+    S.call({ action: 'shop_order_track', no: no, phone4: p4 }).then(function (r) {
+      btn.disabled = false;
+      if (r.result === 'success') return show(r);
+      msg.textContent = r.message || '주문을 찾지 못했습니다.';
+    }, function () { btn.disabled = false; msg.textContent = '연결이 잠시 끊겼습니다. 다시 눌러 주세요.'; });
+  };
+
+  if (!k) return form('');
+  S.call({ action: 'shop_order_track', k: k }).then(function (r) {
+    if (r.result === 'success') return show(r);
+    form(r.message);
+  }, function () { form('불러오지 못했습니다. 잠시 뒤 다시 조회해 주세요.'); });
+})();
+</script>
+</body>
+</html>
