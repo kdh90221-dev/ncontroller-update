@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07090b">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>주문서 · N Controller</title>
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css?v=99b293b2">
+<link rel="stylesheet" href="assets/shop.css?v=8972371b">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html"><span class="mark" aria-hidden="true"></span>N CONTROLLER</a>
+</div></header>
+<main class="shop" id="app">
+  <p class="lead">주문서를 불러오는 중입니다…</p>
+</main>
+<script src="assets/shop.js?v=96fa040c"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
+<script>
+(function () {
+  var S = window.NCShop, app = document.getElementById('app');
+  var k = new URLSearchParams(location.search).get('k') || '';
+  var order = null;
+
+  function stop(title, text) {
+    app.innerHTML = '<h1>' + S.esc(title) + '</h1><p class="lead">' + S.esc(text) + '</p>' +
+      '<a class="go" href="' + S.KAKAO + '" target="_blank" rel="noopener">카카오톡 문의</a>';
+  }
+
+  function done(o) {
+    app.innerHTML =
+      '<svg class="ok-mark" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" fill="none" stroke="#4da3ff" stroke-width="2"/>' +
+      '<path d="M16 27l7 7 13-15" fill="none" stroke="#4da3ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<h1 class="center">주문이 접수되었습니다</h1><p class="lead center">주문번호 <b>' + S.esc(o.order_no) + '</b></p>' +
+      S.payBox(o) +
+      '<a class="go" href="track.html?k=' + encodeURIComponent(k) + '">주문 조회</a>' + S.afterBox() +
+      '<p class="hint center">이 화면 주소를 저장해 두면 언제든 주문 조회를 다시 열 수 있습니다.</p>';
+    window.scrollTo(0, 0);
+  }
+
+  function used(o) {
+    app.innerHTML = '<h1>이미 주문한 주문서입니다</h1><p class="lead">진행 상황은 주문 조회에서 볼 수 있습니다.</p>' +
+      S.orderHead(o) + '<a class="go" href="track.html?k=' + encodeURIComponent(k) + '">주문 조회</a>' + S.afterBox();
+  }
+
+  function form(o) {
+    order = o;
+    var cars = (o.vehicles || []).map(function (v) {
+      return '<option' + (v === o.vehicle ? ' selected' : '') + '>' + S.esc(v) + '</option>';
+    }).join('');
+    app.innerHTML =
+      '<h1>주문서' + (o.test ? '<span class="test">시험</span>' : '') + '</h1>' +
+      '<p class="lead">상담에서 정한 주문입니다. 받는 분 정보만 적어 주세요.</p>' +
+      '<div class="box sum"><div class="k">주문 제품</div><div class="p">' + S.product(o) + '</div>' +
+      '<div class="row"><span>금액</span><span class="amt">' + S.won(o.amount) + '</span></div>' +
+      (o.ship_note ? '<div class="row"><span>발송</span><span>' + S.esc(o.ship_note) + '</span></div>' : '') +
+      '<p class="hint">제품이나 금액이 다르면 카카오톡으로 말씀해 주세요.</p></div>' +
+      '<div class="box"><h2>주문하는 분</h2>' +
+      '<label>이름<input type="text" id="name" autocomplete="name" placeholder="홍길동"></label>' +
+      '<label>연락처<input type="tel" id="phone" autocomplete="tel" inputmode="tel" placeholder="010-0000-0000"></label>' +
+      '<label>차종<select id="vehicle">' + cars + '</select></label></div>' +
+      '<div class="box"><h2>받는 곳</h2>' +
+      '<div class="line"><input type="text" id="zip" placeholder="우편번호" aria-label="우편번호" inputmode="numeric">' +
+      '<button type="button" class="btn small" id="findAddr">주소 찾기</button></div>' +
+      '<input type="text" id="addr" placeholder="주소" aria-label="주소" style="margin-top:8px">' +
+      '<input type="text" id="addr2" placeholder="상세 주소" aria-label="상세 주소" style="margin-top:8px">' +
+      '<label>배송 요청 (선택)<input type="text" id="req" placeholder="문 앞에 놓아 주세요"></label></div>' +
+      '<div class="box"><h2>입금</h2>' +
+      '<label>입금자명<input type="text" id="payer" placeholder="이름과 다르면 적어 주세요"></label>' +
+      '<p class="hint">무통장 입금만 받습니다. 주문하면 입금 계좌가 나옵니다.</p></div>' +
+      '<label class="check"><input type="checkbox" id="agree"><span>주문 내용 확인 · 개인정보 수집 동의 (필수)</span></label>' +
+      '<details><summary>수집 항목 · 보관 기간 보기</summary>' +
+      '<p>이름 · 연락처 · 주소 · 입금자명 · 차종을 주문 처리 · 배송 · A/S 안내에만 씁니다. ' +
+      '거래 기록은 관련 법에서 정한 기간 동안 보관한 뒤 지웁니다.</p></details>' +
+      '<p class="msg" id="msg"></p>' +
+      '<button type="button" class="go" id="go">주문하기</button>' +
+      '<p class="hint center">이 주문서는 한 번 주문하면 닫힙니다.</p>';
+    document.getElementById('findAddr').onclick = function () {
+      if (!window.daum || !daum.Postcode) { document.getElementById('addr').focus(); return; }
+      new daum.Postcode({ oncomplete: function (d) {
+        document.getElementById('zip').value = d.zonecode;
+        document.getElementById('addr').value = d.roadAddress || d.jibunAddress;
+        document.getElementById('addr2').focus();
+      } }).open();
+    };
+    document.getElementById('go').onclick = submit;
+  }
+
+  function val(id) { return (document.getElementById(id).value || '').trim(); }
+
+  function submit() {
+    var btn = document.getElementById('go'), msg = document.getElementById('msg');
+    ['name', 'phone', 'addr'].forEach(function (id) { document.getElementById(id).classList.remove('bad'); });
+    msg.textContent = '';
+    var body = { action: 'shop_order_submit', k: k, name: val('name'), phone: val('phone'), zip: val('zip'), addr: val('addr'),
+                 addr2: val('addr2'), req: val('req'), payer: val('payer'), vehicle: val('vehicle'),
+                 agree: document.getElementById('agree').checked };
+    if (!body.name) return bad('name', '이름을 적어 주세요.');
+    if (body.phone.replace(/\D/g, '').length < 9) return bad('phone', '연락처를 확인해 주세요.');
+    if (!body.addr) return bad('addr', '받는 곳 주소를 적어 주세요.');
+    if (!body.agree) { msg.textContent = '주문 내용 확인 · 개인정보 수집에 동의해 주세요.'; return; }
+    btn.disabled = true; btn.textContent = '주문하는 중…';
+    S.call(body).then(function (r) {
+      if (r.result === 'success') return done(r);
+      if (r.result === 'used') return used(r);
+      if (r.result === 'expired' || r.result === 'none') return stop('주문서를 열 수 없습니다', r.message);
+      if (r.field) bad(r.field, r.message); else msg.textContent = r.message || '잠시 뒤 다시 눌러 주세요.';
+      btn.disabled = false; btn.textContent = '주문하기';
+    }, function () {
+      msg.textContent = '연결이 잠시 끊겼습니다. 다시 눌러 주세요.';
+      btn.disabled = false; btn.textContent = '주문하기';
+    });
+  }
+
+  function bad(id, text) {
+    var el = document.getElementById(id);
+    if (el) { el.classList.add('bad'); el.focus(); }
+    document.getElementById('msg').textContent = text;
+  }
+
+  if (!k) return stop('주문서를 열 수 없습니다', '상담 때 받은 주문서 링크로 들어와 주세요.');
+  S.call({ action: 'shop_order_get', k: k }).then(function (r) {
+    if (r.result === 'success') return form(r);
+    if (r.result === 'used') return used(r);
+    stop('주문서를 열 수 없습니다', r.message || '카카오톡으로 문의해 주세요.');
+  }, function () { stop('주문서를 불러오지 못했습니다', '잠시 뒤 다시 열어 주세요.'); });
+})();
+</script>
+</body>
+</html>
