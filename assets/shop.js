@@ -55,20 +55,24 @@
       return '<div class="box"><h2>진행 상황</h2><p class="cancel">' + (st === '환불' ? '환불된 주문입니다' : '취소된 주문입니다') +
         (d.cancel ? ' · ' + day(d.cancel) : '') + '</p><p class="hint">궁금한 점은 카카오톡으로 문의해 주세요.</p></div>';
     }
-    var lv = { '접수': 0, '입금': 1, '출고': 2, '배송': 2, '완료': 3 }[st];
+    // ★11-24 6단계 — 입금 완료 → 제작 중 → 제작 완료 · 발송 준비 → 발송
+    var lv = { '접수': 0, '입금': 1, '제작 중': 2, '제작 완료': 3, '출고': 4, '배송': 4, '완료': 5 }[st];
     if (lv === undefined) lv = 0;
     var steps = [
       ['주문 접수', d.order ? day(d.order) : '', lv === 0 ? '입금을 기다리고 있습니다' : ''],
-      ['입금 확인 · 제작', d.paid ? day(d.paid) : '', lv === 1 ? (o.ship_note || '제작 중입니다') : ''],
+      ['입금 완료', d.paid ? day(d.paid) : '', lv === 1 ? (o.ship_note || '제작 순서를 기다리고 있습니다') : ''],
+      ['제작 중', d.made ? day(d.made) : '', lv === 2 ? '제작하고 있습니다' : ''],
+      ['제작 완료 · 발송 준비', d.built ? day(d.built) : '', lv === 3 ? '발송을 준비하고 있습니다' : ''],
       ['발송', d.ship ? day(d.ship) : '', ''],
       ['배송 완료', d.delivered ? day(d.delivered) : '', '']
     ];
+    var LAST = steps.length - 1, SHIP = 4;
     var html = '<div class="box"><h2>진행 상황</h2><ol class="steps2">';
     steps.forEach(function (s, i) {
-      var cls = i < lv ? 'done' : i === lv ? (lv === 3 ? 'done' : 'now') : 'todo';
+      var cls = i < lv ? 'done' : i === lv ? (lv === LAST ? 'done' : 'now') : 'todo';
       html += '<li class="' + cls + '"><b>' + s[0] + '</b>' + (s[1] ? '<div class="d">' + s[1] + '</div>' : '') +
         (s[2] ? '<div class="d">' + esc(s[2]) + '</div>' : '');
-      if (i === 2 && lv >= 2 && o.invoice) {
+      if (i === SHIP && lv >= SHIP && o.invoice) {
         html += '<div class="d">송장 ' + esc(o.invoice) + copyBtn(String(o.invoice).replace(/[^0-9]/g, '')) + '</div>';
       }
       html += '</li>';
