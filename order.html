@@ -22,7 +22,7 @@
   <p style="font-size:13px;line-height:1.8">대표 김동현 · 이메일 <a href="mailto:kdh3486@naver.com">kdh3486@naver.com</a> · 카카오톡 상담 <a href="https://open.kakao.com/o/s6SgPQXi" target="_blank" rel="noopener">오픈채팅</a></p>
   <p>N Controller · ncontroller.kr</p>
 </div></footer>
-<script src="assets/shop.js?v=f487b877"></script>
+<script src="assets/shop.js?v=2b0a688f"></script>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
 <script>
 (function () {
@@ -45,7 +45,7 @@
       (o.ship_method && o.ship_method !== '택배'
         ? '<div class="box"><div class="row"><span>수령</span><span>' + S.esc(o.ship_method) + '</span></div>' +
           (o.ship_method === '방문 설치' ? '<div class="row"><span>설치비</span><span>50,000원 · 현장 결제</span></div>' : '') +
-          '<p class="hint">방문 날짜와 장소는 카카오톡으로 약속해 주세요.</p></div>'
+          '<p class="hint">방문 수령 · 방문 설치 시 일정 · 날짜 · 장소는 카카오톡으로 문의 주세요.</p></div>'
         : order && order.ship_note ? '<div class="box"><div class="row"><span>발송</span><span>' + S.esc(order.ship_note) + '</span></div>' +
         '<p class="hint">발송하면 주문 조회에서 송장 번호를 보실 수 있습니다.</p></div>' : '') +
       '<a class="go" href="track.html?k=' + encodeURIComponent(k) + '">주문 조회</a>' + S.afterBox() +
@@ -82,7 +82,7 @@
       '<label class="check"><input type="radio" name="ship" value="방문 수령"><span>방문 수령</span></label>' +
       '<label class="check"><input type="radio" name="ship" value="방문 설치"><span>방문 설치 <b class="plus">+50,000원</b>' +
       '<span class="sub3">설치비는 설치하는 날 현장 결제</span></span></label>' +
-      '<p class="hint" id="visitHint" hidden>방문 날짜와 장소는 카카오톡으로 약속해 주세요.</p></div>' +
+      '<p class="hint" id="visitHint" hidden>방문 수령 · 방문 설치 시 일정 · 날짜 · 장소는 카카오톡으로 문의 주세요.</p></div>' +
       '<div class="box" id="shipBox"><h2>배송지</h2>' +
       '<div class="line"><input type="text" id="zip" placeholder="우편번호" aria-label="우편번호" inputmode="numeric">' +
       '<button type="button" class="btn small" id="findAddr">주소 찾기</button></div>' +
