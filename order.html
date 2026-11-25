@@ -9,7 +9,7 @@
 <title>주문서 · N Controller</title>
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css?v=99b293b2">
-<link rel="stylesheet" href="assets/shop.css?v=84c9dcd4">
+<link rel="stylesheet" href="assets/shop.css?v=db80377a">
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -22,7 +22,7 @@
   <p style="font-size:13px;line-height:1.8">대표 김동현 · 이메일 <a href="mailto:kdh3486@naver.com">kdh3486@naver.com</a> · 카카오톡 상담 <a href="https://open.kakao.com/o/s6SgPQXi" target="_blank" rel="noopener">오픈채팅</a></p>
   <p>N Controller · ncontroller.kr</p>
 </div></footer>
-<script src="assets/shop.js?v=06002016"></script>
+<script src="assets/shop.js?v=f487b877"></script>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
 <script>
 (function () {
@@ -42,7 +42,11 @@
       '<path d="M16 27l7 7 13-15" fill="none" stroke="#4da3ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
       '<h1 class="center">주문이 접수되었습니다</h1><p class="lead center">주문번호 <b>' + S.esc(o.order_no) + '</b></p>' +
       S.payBox(o) +
-      (order && order.ship_note ? '<div class="box"><div class="row"><span>발송</span><span>' + S.esc(order.ship_note) + '</span></div>' +
+      (o.ship_method && o.ship_method !== '택배'
+        ? '<div class="box"><div class="row"><span>수령</span><span>' + S.esc(o.ship_method) + '</span></div>' +
+          (o.ship_method === '방문 설치' ? '<div class="row"><span>설치비</span><span>50,000원 · 현장 결제</span></div>' : '') +
+          '<p class="hint">방문 날짜와 장소는 카카오톡으로 약속해 주세요.</p></div>'
+        : order && order.ship_note ? '<div class="box"><div class="row"><span>발송</span><span>' + S.esc(order.ship_note) + '</span></div>' +
         '<p class="hint">발송하면 주문 조회에서 송장 번호를 보실 수 있습니다.</p></div>' : '') +
       '<a class="go" href="track.html?k=' + encodeURIComponent(k) + '">주문 조회</a>' + S.afterBox() +
       '<p class="hint center">주문 조회는 사이트 「주문 조회」에서 성함과 연락처 뒤 4자리로 언제든 하실 수 있습니다.</p>';
@@ -72,7 +76,14 @@
       '<label>이름<input type="text" id="name" autocomplete="name" placeholder="홍길동"></label>' +
       '<label>연락처<input type="tel" id="phone" autocomplete="tel" inputmode="tel" placeholder="010-0000-0000"></label>' +
       '<label>차종<select id="vehicle">' + cars + '</select></label></div>' +
-      '<div class="box"><h2>배송지</h2>' +
+      // ★11-25 수령 방법 — 택배 배송 · 방문 수령 · 방문 설치(설치비 현장 결제). 배송지는 택배일 때만
+      '<div class="box"><h2>수령 방법</h2>' +
+      '<label class="check"><input type="radio" name="ship" value="택배" checked><span>택배 배송</span></label>' +
+      '<label class="check"><input type="radio" name="ship" value="방문 수령"><span>방문 수령</span></label>' +
+      '<label class="check"><input type="radio" name="ship" value="방문 설치"><span>방문 설치 <b class="plus">+50,000원</b>' +
+      '<span class="sub3">설치비는 설치하는 날 현장 결제</span></span></label>' +
+      '<p class="hint" id="visitHint" hidden>방문 날짜와 장소는 카카오톡으로 약속해 주세요.</p></div>' +
+      '<div class="box" id="shipBox"><h2>배송지</h2>' +
       '<div class="line"><input type="text" id="zip" placeholder="우편번호" aria-label="우편번호" inputmode="numeric">' +
       '<button type="button" class="btn small" id="findAddr">주소 찾기</button></div>' +
       '<input type="text" id="addr" placeholder="주소" aria-label="주소" style="margin-top:8px">' +
@@ -80,7 +91,7 @@
       '<label>배송 요청 (선택)<input type="text" id="req" placeholder="예: 문 앞에 놓아 주세요"></label></div>' +
       '<div class="box"><h2>입금</h2>' +
       '<label>입금자명<input type="text" id="payer" placeholder="주문자 이름과 다를 때만 적어 주세요"></label>' +
-      '<p class="hint">무통장 입금만 받습니다. 주문하시면 입금 계좌가 안내됩니다.' +
+      '<p class="hint">결제는 계좌이체로 해 주세요. 주문하시면 입금 계좌가 나옵니다.' +
       (o.price_kind === 'v1 이벤트' ? '<br>이벤트 가격은 닉네임 하나당 한 대까지 적용됩니다.' : '') + '</p></div>' +
       '<label class="check"><input type="checkbox" id="agree"><span>주문 내용을 확인했으며 개인정보 수집에 동의합니다 (필수)</span></label>' +
       '<details><summary>수집 항목과 보관 기간 보기</summary>' +
@@ -97,7 +108,16 @@
         document.getElementById('addr2').focus();
       } }).open();
     };
+    [].forEach.call(document.querySelectorAll('input[name=ship]'), function (r) { r.onchange = shipView; });
+    shipView();
     document.getElementById('go').onclick = submit;
+  }
+
+  function ship() { var r = document.querySelector('input[name=ship]:checked'); return r ? r.value : '택배'; }
+  function shipView() {
+    var post = ship() === '택배';
+    document.getElementById('shipBox').hidden = !post;
+    document.getElementById('visitHint').hidden = post;
   }
 
   function val(id) { return (document.getElementById(id).value || '').trim(); }
@@ -108,10 +128,11 @@
     msg.textContent = '';
     var body = { action: 'shop_order_submit', k: k, name: val('name'), phone: val('phone'), zip: val('zip'), addr: val('addr'),
                  addr2: val('addr2'), req: val('req'), payer: val('payer'), vehicle: val('vehicle'),
-                 agree: document.getElementById('agree').checked };
+                 agree: document.getElementById('agree').checked, ship: ship() };
+    if (body.ship !== '택배') { body.zip = body.addr = body.addr2 = body.req = ''; }
     if (!body.name) return bad('name', '이름을 적어 주세요.');
     if (body.phone.replace(/\D/g, '').length < 9) return bad('phone', '연락처를 확인해 주세요.');
-    if (!body.addr) return bad('addr', '배송지 주소를 적어 주세요.');
+    if (body.ship === '택배' && !body.addr) return bad('addr', '배송지 주소를 적어 주세요.');
     if (!body.agree) { msg.textContent = '주문 내용 확인과 개인정보 수집에 동의해 주세요.'; return; }
     btn.disabled = true; btn.textContent = '주문하는 중…';
     S.call(body).then(function (r) {
