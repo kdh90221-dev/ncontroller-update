@@ -1,4 +1,4 @@
-/* 주문서 · 주문 조회 공용 (2026-11-22) — 서버 = Apps Script 웹 앱 (빌더와 같은 주소) */
+/* 주문서 · 주문 조회 공용 (2026-11-22 · 11-25 배송 조회) — 서버 = Apps Script 웹 앱 (빌더와 같은 주소) */
 (function () {
   var SERVER = window.NC_SERVER || 'https://script.google.com/macros/s/AKfycbwcvu1k3HLs8aGLRlp2007acu-CQCtjm4TMZFfDdHQf2p-n0ZCEO9hynKv1byQIhye7/exec';
   var KAKAO = 'https://open.kakao.com/o/s6SgPQXi';
@@ -23,6 +23,22 @@
     if (k === 'v1 이벤트') return '<span class="kind">v1 고객 감사 이벤트</span>';
     if (k === 'v1 할인') return '<span class="kind">v1 고객 할인</span>';
     return '';
+  }
+  /** ★11-25 송장 = 「택배사 번호」 — 택배사 이름을 보고 조회 화면으로 (이름 없으면 번호 · 복사만) */
+  var CARRIERS = [
+    [/한진/, '한진택배', 'https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2='],
+    [/CJ|씨제이|대한통운/i, 'CJ대한통운', 'https://trace.cjlogistics.com/next/tracking.html?wblNo='],
+    [/롯데/, '롯데택배', 'https://www.lotteglogis.com/home/reservation/tracking/linkView?InvNo='],
+    [/우체국/, '우체국택배', 'https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?sid1='],
+    [/로젠/, '로젠택배', 'https://www.ilogen.com/web/personal/trace/']
+  ];
+  function invoice(s) {
+    var t = String(s || ''), no = t.replace(/[^0-9]/g, '');
+    for (var i = 0; i < CARRIERS.length; i++) {
+      var c = CARRIERS[i];
+      if (c[0].test(t) && no) return { name: c[1], no: no, url: c[2] + no, text: c[1] + ' ' + no };
+    }
+    return { name: '', no: no, url: '', text: '송장 ' + (no || t) };
   }
   function copyBtn(text) { return '<button type="button" class="copy" data-copy="' + esc(text) + '">복사</button>'; }
   document.addEventListener('click', function (e) {
@@ -67,13 +83,22 @@
       ['배송 완료', d.delivered ? day(d.delivered) : '', '']
     ];
     var LAST = steps.length - 1, SHIP = 4;
+    var visit = o.ship_method === '방문 수령' || o.ship_method === '방문 설치';   // ★11-25 방문이면 「전달」
+    if (visit) {
+      steps[3][0] = '제작 완료 · 전달 준비';
+      if (lv === 3) steps[3][2] = '방문 날짜와 장소는 카카오톡으로 약속해 주세요';
+      steps[4][0] = o.ship_method === '방문 설치' ? '방문 설치' : '방문 수령';
+      steps[5][0] = '완료';
+    }
     var html = '<div class="box"><h2>진행 상황</h2><ol class="steps2">';
     steps.forEach(function (s, i) {
       var cls = i < lv ? 'done' : i === lv ? (lv === LAST ? 'done' : 'now') : 'todo';
       html += '<li class="' + cls + '"><b>' + s[0] + '</b>' + (s[1] ? '<div class="d">' + s[1] + '</div>' : '') +
         (s[2] ? '<div class="d">' + esc(s[2]) + '</div>' : '');
-      if (i === SHIP && lv >= SHIP && o.invoice) {
-        html += '<div class="d">송장 ' + esc(o.invoice) + copyBtn(String(o.invoice).replace(/[^0-9]/g, '')) + '</div>';
+      if (i === SHIP && lv >= SHIP && o.invoice && !visit) {
+        var iv = invoice(o.invoice);
+        html += '<div class="d">' + esc(iv.text) + (iv.no ? copyBtn(iv.no) : '') + '</div>' +
+          (iv.url ? '<a class="trk" href="' + esc(iv.url) + '" target="_blank" rel="noopener">배송 조회 ›</a>' : '');
       }
       html += '</li>';
     });
@@ -85,6 +110,8 @@
       kindTag(o) + '<div class="p">' + product(o) + '</div>' +
       '<div class="row"><span>차종</span><span>' + esc(o.vehicle || '-') + '</span></div>' +
       '<div class="row"><span>금액</span><span>' + won(o.amount) + '</span></div>' +
+      (o.ship_method && o.ship_method !== '택배' ? '<div class="row"><span>수령</span><span>' + esc(o.ship_method) +
+        (o.ship_method === '방문 설치' ? ' · 설치비 50,000원 현장 결제' : '') + '</span></div>' : '') +
       (o.ship_note && (o.state === '접수' || o.state === '입금') ? '<div class="row"><span>발송</span><span>' + esc(o.ship_note) + '</span></div>' : '') + '</div>';
   }
 
@@ -93,5 +120,5 @@
   }
 
   window.NCShop = { call: call, won: won, day: day, esc: esc, product: product, kindTag: kindTag, payBox: payBox, trackBox: trackBox,
-                    orderHead: orderHead, afterBox: afterBox, copyBtn: copyBtn, KAKAO: KAKAO };
+                    orderHead: orderHead, afterBox: afterBox, copyBtn: copyBtn, invoice: invoice, KAKAO: KAKAO };
 })();
