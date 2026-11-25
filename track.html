@@ -9,7 +9,7 @@
 <title>주문 조회 · N Controller</title>
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css?v=99b293b2">
-<link rel="stylesheet" href="assets/shop.css?v=84c9dcd4">
+<link rel="stylesheet" href="assets/shop.css?v=db80377a">
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -33,7 +33,7 @@
   <p style="font-size:13px;line-height:1.8">대표 김동현 · 이메일 <a href="mailto:kdh3486@naver.com">kdh3486@naver.com</a> · 카카오톡 상담 <a href="https://open.kakao.com/o/s6SgPQXi" target="_blank" rel="noopener">오픈채팅</a></p>
   <p>N Controller · ncontroller.kr</p>
 </div></footer>
-<script src="assets/shop.js?v=06002016"></script>
+<script src="assets/shop.js?v=f487b877"></script>
 <script>
 (function () {
   var S = window.NCShop, out = document.getElementById('out'), ask = document.getElementById('ask');
@@ -62,7 +62,8 @@
     r.orders.forEach(function (o, i) {
       var sub = o.state === '접수' && o.due ? '입금 기한 ' + S.day(o.due) + '까지'
               : (o.state === '입금' && o.ship_note) ? o.ship_note
-              : o.invoice ? '송장 ' + o.invoice : '';
+              : (o.ship_method === '방문 수령' || o.ship_method === '방문 설치') ? o.ship_method
+              : o.invoice ? S.invoice(o.invoice).text : '';
       html += '<button type="button" class="olist" data-i="' + i + '">' +
         '<div class="top2"><span>' + S.esc(S.day(o.dates.order) || o.order_no) + '</span><b>' + S.esc(STATE[o.state] || o.state) + '</b></div>' +
         '<div class="nm">' + S.product(o) + '</div>' + (sub ? '<div class="sub2">' + S.esc(sub) + '</div>' : '') + '</button>';
